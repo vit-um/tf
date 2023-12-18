@@ -1,4 +1,4 @@
-# ## Coding Session. Terraform + Flux
+# Coding Session. Terraform + Flux
 Знайомство з концепцією тераформ модулів, розгорнемо набір інструментів що реалізують повний повний автоматичний цикл на базі GitOps та Kubernetes.
 - Terraform створить  Kubernetes cluster та розгорне Flux 
 - Flux почне узгоджувати стан ІС та застосунків базуючись на джерелі у GitHub
