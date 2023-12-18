@@ -1,4 +1,4 @@
-# Task 16 Підготовка інфраструктурного репозиторію для створення GKE кластеру.
+# Task 17 Створення коду Terraform для Flux на GKE
 
 ## Створення початкового коду IAC.
 1. Роботу будемо виконувати на локальному комп'ютері, отже виконаємо [Authorize the gcloud CLI](https://cloud.google.com/sdk/docs/authorizing)
@@ -121,6 +121,7 @@ terraform {
 4. Якщо вам потрібно видалити інфраструктуру, ви можете запустити terraform destroy. При цьому будуть видалені всі ресурси, створені тераформою, і всі пов'язані з ними дані.
 ```sh
 ✗ tf destroy -var-file=vars.tfvars
+Destroy complete! Resources: 3 destroyed.
 ```
 5. Якщо вам більше не потрібно використовувати GCS для зберігання стану Terraform, ви можете видалити ts.state файл.
 
