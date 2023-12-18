@@ -1,6 +1,5 @@
 variable "GOOGLE_PROJECT" {
   type        = string
-   default     = "vit-um"
   description = "GCP project to use"
 }
 
