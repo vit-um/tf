@@ -1,4 +1,4 @@
-# Task 17 Створення коду Terraform для Flux на GKE
+# Task 17 Створення коду Terraform для Flux на kind_cluster
 
 ## Створення початкового коду IAC.
 1. Роботу будемо виконувати на локальному комп'ютері, отже виконаємо [Authorize the gcloud CLI](https://cloud.google.com/sdk/docs/authorizing)
