@@ -49,10 +49,10 @@ module "gke-woekload-identity" {
 }
 
 module "kms" {
-  source  = "https://github.com/vit-um/terraform-google-kms"
+  source             = "https://github.com/vit-um/terraform-google-kms"
   project_id         = var.GOOGLE_PROJECT
-  location           = "global"
   keyring            = "sops-flux"
+  location           = "global"
   keys               = ["sops-key-flux"]
   prevent_destroy    = false
 }
