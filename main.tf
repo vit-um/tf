@@ -36,7 +36,7 @@ module "flux_bootstrap" {
   github_token      = var.GITHUB_TOKEN
 }
 
-module "gke-woekload-identity" {
+module "gke-workload-identity" {
   source              = "terraform-google-modules/kubernetes-engine/google//modules/workload-identity"
   use_existing_k8s_sa = true
   name                = "kustomize-controller"
@@ -51,7 +51,7 @@ module "gke-woekload-identity" {
 module "kms" {
   source             = "github.com/vit-um/terraform-google-kms"
   project_id         = var.GOOGLE_PROJECT
-  keyring            = "sops-flux"
+  keyring            = "sops-flux1"
   location           = "global"
   keys               = ["sops-key-flux"]
   prevent_destroy    = false
