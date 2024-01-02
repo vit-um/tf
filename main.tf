@@ -36,16 +36,22 @@ module "flux_bootstrap" {
   github_token      = var.GITHUB_TOKEN
 }
 
+# cluster_name        = module.gke_cluster.cluster.name
+
 module "gke-workload-identity" {
   source              = "terraform-google-modules/kubernetes-engine/google//modules/workload-identity"
   use_existing_k8s_sa = true
+  annotate_k8s_sa     = true
   name                = "kustomize-controller"
   namespace           = "flux-system"
   project_id          = var.GOOGLE_PROJECT
-  cluster_name        = "main"
   location            = var.GOOGLE_REGION
-  annotate_k8s_sa     = true
+  cluster_name        = "main"  
   roles               = ["roles/cloudkms.cryptoKeyEncrypterDecrypter"]
+
+    module_depends_on = [
+    module.flux_bootstrap
+  ]
 }
 
 module "kms" {
