@@ -6,7 +6,7 @@ terraform {
 }
 
 module "github_repository" {
-  source                   = "github.com/vit-um/tf-github-repository"
+  source                   = "./modules/github_repository"
   github_owner             = var.GITHUB_OWNER
   github_token             = var.GITHUB_TOKEN
   repository_name          = var.FLUX_GITHUB_REPO
@@ -54,14 +54,6 @@ module "gke-workload-identity" {
   ]
 }
 
-# module "kms" {
-#   source             = "github.com/vit-um/terraform-google-kms"
-#   project_id         = var.GOOGLE_PROJECT
-#   keyring            = "sops-flux"
-#   location           = "global"
-#   keys               = ["sops-key-flux"]
-#   prevent_destroy    = false
-# }
 
 data "google_kms_key_ring" "key_ring" {
   name     = "sops-flux"
@@ -85,6 +77,14 @@ resource "google_kms_key_ring" "key_ring" {
   }
 }
 
+# module "kms" {
+#   source             = "github.com/vit-um/terraform-google-kms"
+#   project_id         = var.GOOGLE_PROJECT
+#   keyring            = "sops-flux"
+#   location           = "global"
+#   keys               = ["sops-key-flux"]
+#   prevent_destroy    = false
+# }
 
 resource "null_resource" "cluster_credentials" {
   depends_on = [
@@ -99,3 +99,18 @@ resource "null_resource" "cluster_credentials" {
   }
 }
 
+resource "null_resource" "git_commit" {
+  depends_on = [
+    module.flux_bootstrap
+  ]
+
+  provisioner "local-exec" {
+    command = <<EOF
+      if [ -d ${var.FLUX_GITHUB_REPO} ]; then
+        rm -rf ${var.FLUX_GITHUB_REPO}
+      fi
+      git clone ${module.github_repository.values.http_clone_url}
+      mkdir -p ${var.FLUX_GITHUB_REPO}/${var.FLUX_GITHUB_TARGET_PATH}/demo
+    EOF
+  }
+}
