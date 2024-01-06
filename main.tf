@@ -15,7 +15,7 @@ module "github_repository" {
 }
 
 module "gke_cluster" {
-  source         = "github.com/vit-um/tf-google-gke-cluster"
+  source         = "./modules/gke_cluster"
   GOOGLE_REGION  = var.GOOGLE_REGION
   GOOGLE_PROJECT = var.GOOGLE_PROJECT
   GKE_NUM_NODES  = 2
@@ -49,17 +49,53 @@ module "gke-workload-identity" {
   cluster_name        = "main"  
   roles               = ["roles/cloudkms.cryptoKeyEncrypterDecrypter"]
 
-    module_depends_on = [
+  module_depends_on = [
     module.flux_bootstrap
   ]
 }
 
-module "kms" {
-  source             = "github.com/vit-um/terraform-google-kms"
-  project_id         = var.GOOGLE_PROJECT
-  keyring            = "sops-flux"
-  location           = "global"
-  keys               = ["sops-key-flux"]
-  prevent_destroy    = true
+# module "kms" {
+#   source             = "github.com/vit-um/terraform-google-kms"
+#   project_id         = var.GOOGLE_PROJECT
+#   keyring            = "sops-flux"
+#   location           = "global"
+#   keys               = ["sops-key-flux"]
+#   prevent_destroy    = false
+# }
+
+data "google_kms_key_ring" "key_ring" {
+  name     = "sops-flux"
+  location = "global"
+  project  = var.GOOGLE_PROJECT
+}
+
+import {
+  to = google_kms_key_ring.key_ring
+  id = "projects/${var.GOOGLE_PROJECT}/locations/${data.google_kms_key_ring.key_ring.location}/keyRings/${data.google_kms_key_ring.key_ring.name}"
+}
+
+resource "google_kms_key_ring" "key_ring" {
+  count    = data.google_kms_key_ring.key_ring.name != null ? 0 : 1
+  name     = "sops-flux"
+  location = "global"
+  project  = var.GOOGLE_PROJECT
+
+  lifecycle {
+    prevent_destroy = false
+  }
+}
+
+
+resource "null_resource" "cluster_credentials" {
+  depends_on = [
+    module.gke_cluster,
+    module.flux_bootstrap
+  ]
+
+  provisioner "local-exec" {
+    command = <<EOF
+      ${module.gke_cluster.cluster.gke_get_credentials_command}
+    EOF
+  }
 }
 
