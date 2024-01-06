@@ -111,6 +111,7 @@ resource "null_resource" "git_commit" {
       fi
       git clone ${module.github_repository.values.http_clone_url}
       mkdir -p ${var.FLUX_GITHUB_REPO}/${var.FLUX_GITHUB_TARGET_PATH}/demo
+      cp demo_app/ns.yaml ${var.FLUX_GITHUB_REPO}/${var.FLUX_GITHUB_TARGET_PATH}/demo/
     EOF
   }
 }
