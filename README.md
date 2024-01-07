@@ -46,7 +46,7 @@ Success! The configuration is valid.
 ✗ flux get all
 ```
 
-5. Не вийщло здолати помилку №409, тому при розгортанні слід використовувати новий `keyring` в наступному модулі: 
+5. Не вийщло здолати помилку №409, тому при кожному новому розгортанні слід використовувати новий `keyring` в наступному модулі: 
 ```hcl
 module "kms" {
   source             = "terraform-google-modules/kms/google"
@@ -58,6 +58,8 @@ module "kms" {
   prevent_destroy    = false
 }
 ```
+- Не забуваємо декативувати створені [ключі](https://console.cloud.google.com/security/kms/keyrings?project=vit-um) бо вони коштують гроші: 
+
 
 6. Якщо застосунок не розгорнувся, видаліть сікрети, після чого можна додати новий без шифрування:
 ```sh
