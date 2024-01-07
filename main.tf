@@ -109,9 +109,14 @@ resource "null_resource" "git_commit" {
       if [ -d ${var.FLUX_GITHUB_REPO} ]; then
         rm -rf ${var.FLUX_GITHUB_REPO}
       fi
-      git clone ${module.github_repository.values.http_clone_url}
-      mkdir -p ${var.FLUX_GITHUB_REPO}/${var.FLUX_GITHUB_TARGET_PATH}/demo
-      cp demo_app/ns.yaml ${var.FLUX_GITHUB_REPO}/${var.FLUX_GITHUB_TARGET_PATH}/demo/
+      git clone ${module.github_repository.values.http_clone_url}    
+      cp -r demo_app/* ${var.FLUX_GITHUB_REPO}/${var.FLUX_GITHUB_TARGET_PATH}/
+      cd ${var.FLUX_GITHUB_REPO}
+      git add .
+      git commit -m"Added all manifests"
+      git push
+      cd ..
+      rm -rf ${var.FLUX_GITHUB_REPO}
     EOF
   }
 }
