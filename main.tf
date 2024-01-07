@@ -22,12 +22,12 @@ module "gke_cluster" {
 }
 
 module "tls_private_key" {
-  source    = "github.com/vit-um/tf-hashicorp-tls-keys"
+  source    = "./modules/tls_private_key"
   algorithm = "RSA"
 }
 
 module "flux_bootstrap" {
-  source            = "github.com/vit-um/tf-fluxcd-flux-bootstrap?ref=gke_auth"
+  source            = "./modules/flux_bootstrap"
   github_repository = "${var.GITHUB_OWNER}/${var.FLUX_GITHUB_REPO}"
   private_key       = module.tls_private_key.private_key_pem
   config_host       = module.gke_cluster.config_host
@@ -35,8 +35,6 @@ module "flux_bootstrap" {
   config_ca         = module.gke_cluster.config_ca
   github_token      = var.GITHUB_TOKEN
 }
-
-# cluster_name        = module.gke_cluster.cluster.name
 
 module "gke-workload-identity" {
   source              = "terraform-google-modules/kubernetes-engine/google//modules/workload-identity"
@@ -135,3 +133,18 @@ resource "null_resource" "git_commit" {
     EOF
   }
 }
+
+# resource "null_resource" "gitops_destroy" {
+#   triggers = {
+#     repo_name = module.github_repository.values.name
+#   }
+
+#   provisioner "local-exec" {
+#     when    = destroy
+#     command = <<EOF
+#       if [ -d ${self.triggers.repo_name} ]; then
+#         rm -rf ${self.triggers.repo_name}
+#       fi
+#     EOF
+#   }
+# }
